@@ -80,47 +80,12 @@ body{
     overflow: hidden;
 }
 
-.topbar{
-    position: sticky;
-    top: 0;
-    z-index: 501;
-    background:var(--bg-panel);
-    border-bottom:1px solid var(--line);
-    padding:var(--sp-1) var(--sp-3);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-shrink:0;
-    font-size:var(--fs-xs);
-    gap:var(--sp-2);
-}
-.topbar .topbar-links{
-    display:flex;
-    align-items:center;
-    gap:var(--sp-2);
-}
-.topbar a, .topbar button.linkish{
-    color:var(--text-dim);
-    text-decoration:none;
-    background:none;
-    border:1px solid var(--line);
-    padding:var(--sp-1) var(--sp-2);
-    border-radius:20px;
-    font-size:var(--fs-xs);
-    font-weight:600;
-}
-.topbar a:hover, .topbar button.linkish:hover{ color:var(--text-main); border-color:var(--text-dim); background:none; }
-
-/* ===== MANNSCHAFTSNAMEN (frei editierbar) ===== */
+/* ===== MANNSCHAFTSNAMEN (frei editierbar, jetzt im Einstellungen-Panel) ===== */
 .team-name-row{
     display:flex;
     gap:var(--sp-3);
     flex-wrap:wrap;
     align-items:center;
-    padding:var(--sp-1) var(--sp-3);
-    background:var(--bg-panel);
-    border-bottom:1px solid var(--line);
-    flex-shrink:0;
 }
 .team-name-row label{
     display:flex;
@@ -213,17 +178,6 @@ body{
     font-size:var(--fs-lg);
     color:var(--text-main);
 }
-.header h1::before{
-    content:"Modul 05";
-    display:block;
-    font-family:var(--font-body);
-    text-transform:uppercase;
-    letter-spacing:0.14em;
-    font-size:clamp(7px, 1vmin, 10px);
-    color:var(--accent);
-    font-weight:700;
-}
-
 .header-controls{
     display:flex;
     gap:var(--sp-1);
@@ -280,6 +234,17 @@ button:active {
     line-height:1;
     padding:clamp(4px, 0.9vmin, 8px) clamp(10px, 1.8vmin, 16px) !important;
 }
+
+/* Einstellungen (Zahnrad) & Spiel-Historie: gleich groß/griffig wie der
+   Vollbild-Button, damit alle Kopfzeilen-Icons auf dem Tablet gut zu treffen sind. */
+.settings-btn, .history-btn{
+    font-size:clamp(18px, 3vmin, 26px) !important;
+    line-height:1;
+    padding:clamp(4px, 0.9vmin, 8px) clamp(10px, 1.8vmin, 16px) !important;
+    background:#1c2734 !important;
+    border:1px solid var(--line) !important;
+}
+.settings-btn:hover, .history-btn:hover{ background:#26364a !important; }
 
 .keyboard-status {
     font-size: var(--fs-xs);
@@ -726,6 +691,182 @@ button:active {
 .kehre-confirm-yes{ background:var(--green); color:white; }
 .kehre-confirm-no{ background:var(--red); color:white; }
 
+/* ===== EINSTELLUNGEN (Zahnrad) – Mannschaftsnamen, Farben, Siege/Kehren/Spieler ===== */
+.settings-overlay {
+    position: fixed; inset:0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 20003;
+    backdrop-filter: blur(5px);
+    padding: 3vh 3vw;
+}
+.settings-overlay.show { display: flex; }
+.settings-box {
+    background: white; color:#222;
+    border-radius: 26px;
+    padding: clamp(18px, 4vmin, 36px);
+    max-width: 640px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    text-align: left;
+}
+.settings-box h3{
+    font-size:1.5rem;
+    margin-bottom:18px;
+    color:var(--green);
+    text-align:center;
+}
+.settings-close-btn{
+    position:absolute;
+    top:14px; right:14px;
+    background:#eee; color:#333;
+    border-radius:50%;
+    width:36px; height:36px;
+    padding:0;
+    font-size:1.1rem;
+    line-height:1;
+    display:flex; align-items:center; justify-content:center;
+}
+.settings-close-btn:hover{ background:#ddd; }
+.settings-section{
+    margin-bottom:22px;
+    padding-bottom:18px;
+    border-bottom:1px solid #eee;
+}
+.settings-section:last-of-type{ border-bottom:none; margin-bottom:10px; }
+.settings-section h4{
+    font-size:0.85rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:#7a8a80;
+    margin-bottom:12px;
+    font-weight:700;
+}
+.settings-box .team-name-row label{ color:#556; }
+.settings-box .team-name-row input{
+    background:#f4f6f5;
+    color:#222;
+    border:1px solid #dce4de;
+}
+.settings-box .color-toggle{ background:#f4f6f5; border-color:#dce4de; }
+.settings-box .color-btn{ color:#667; }
+.settings-selects{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+}
+.settings-selects label{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    font-size:0.8rem;
+    font-weight:700;
+    color:#556;
+    flex:1 1 160px;
+}
+.settings-selects select{
+    background:#f4f6f5;
+    color:#222;
+    border:1px solid #dce4de;
+    border-radius:12px;
+    padding:10px 12px;
+    font-size:1rem;
+    font-weight:600;
+}
+.settings-done-btn{
+    display:block;
+    width:100%;
+    padding:14px;
+    font-size:1.1rem;
+    background:var(--green);
+    color:white;
+    border-radius:14px;
+    font-weight:800;
+}
+
+/* ===== SPIEL-HISTORIE ===== */
+.history-overlay {
+    position: fixed; inset:0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 20003;
+    backdrop-filter: blur(5px);
+    padding: 3vh 3vw;
+}
+.history-overlay.show { display: flex; }
+.history-box {
+    background: white; color:#222;
+    border-radius: 26px;
+    padding: clamp(18px, 4vmin, 36px);
+    max-width: 620px;
+    width: 100%;
+    max-height: 85vh;
+    display:flex;
+    flex-direction:column;
+    position: relative;
+    text-align: left;
+}
+.history-box h3{
+    font-size:1.5rem;
+    margin-bottom:6px;
+    color:var(--green);
+    text-align:center;
+}
+.history-summary{
+    text-align:center;
+    font-weight:700;
+    color:#445;
+    background:#f4f6f5;
+    border-radius:12px;
+    padding:10px;
+    margin:10px 0 16px;
+    font-size:0.95rem;
+}
+.history-table-wrap{
+    overflow-y:auto;
+    flex:1;
+    min-height:0;
+    border:1px solid #eee;
+    border-radius:12px;
+}
+.history-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.95rem;
+}
+.history-table thead th{
+    position:sticky; top:0;
+    background:var(--green);
+    color:white;
+    text-align:left;
+    padding:10px 12px;
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+}
+.history-table tbody td{
+    padding:10px 12px;
+    border-bottom:1px solid #eee;
+}
+.history-table tbody tr:nth-child(even) td{ background:#f8faf9; }
+.history-close-btn{
+    display:block;
+    width:100%;
+    padding:14px;
+    font-size:1.1rem;
+    background:var(--green);
+    color:white;
+    border-radius:14px;
+    font-weight:800;
+    margin-top:16px;
+}
+
 /* ===== RESPONSIVE-STRUKTUR =====
    Die feste Skalierung oben (clamp()+vmin) deckt bereits jede Bildschirmgröße
    fließend ab - hier geht es nur noch um die STRUKTUR: Wann werden die beiden
@@ -741,56 +882,14 @@ button:active {
 </head>
 <body>
 
-<div class="topbar">
-    <div class="topbar-links">
-        <a href="dashboard.html">🏠 Zurück zum Dashboard</a>
-    </div>
-</div>
-
-<div class="team-name-row">
-    <div class="team-name-group">
-        <label><span id="teamIconW">⚪</span> <input type="text" id="teamNameInputW" maxlength="24" placeholder="Mannschaftsname W" oninput="updateTeamName('w', this.value)"></label>
-        <div class="color-toggle" id="colorToggleW">
-            <button type="button" class="color-btn green" onclick="setTeamColor('w','green')"><span class="dot"></span>Leuchtgrün</button>
-            <button type="button" class="color-btn red" onclick="setTeamColor('w','red')"><span class="dot"></span>Leuchtrot</button>
-        </div>
-    </div>
-    <div class="team-name-group">
-        <label><span id="teamIconE">🔴</span> <input type="text" id="teamNameInputE" maxlength="24" placeholder="Mannschaftsname E" oninput="updateTeamName('e', this.value)"></label>
-        <div class="color-toggle" id="colorToggleE">
-            <button type="button" class="color-btn green" onclick="setTeamColor('e','green')"><span class="dot"></span>Leuchtgrün</button>
-            <button type="button" class="color-btn red" onclick="setTeamColor('e','red')"><span class="dot"></span>Leuchtrot</button>
-        </div>
-    </div>
-</div>
-
 <div class="header">
     <h1>Trainingsmodus Pro Tablet</h1>
 
     <div class="header-controls">
         <span class="keyboard-status" id="keyboardStatus">🔑 Bereit</span>
 
-        <select id="gamesSelect">
-            <option value="2" selected>2 Siege</option>
-            <option value="3">3 Siege</option>
-            <option value="4">4 Siege</option>
-            <option value="5">5 Siege</option>
-            <option value="6">6 Siege</option>
-        </select>
-
-        <select id="kehrenSelect">
-            <option value="4">4 Kehren</option>
-            <option value="6" selected>6 Kehren</option>
-            <option value="8">8 Kehren</option>
-            <option value="10">10 Kehren</option>
-        </select>
-
-        <select id="playerCount">
-            <option value="3">3 Spieler/Kehre</option>
-            <option value="4" selected>4 Spieler/Kehre</option>
-            <option value="5">5 Spieler/Kehre</option>
-            <option value="6">6 Spieler/Kehre</option>
-        </select>
+        <button class="settings-btn" onclick="openSettings()" title="Einstellungen">⚙️</button>
+        <button class="history-btn" onclick="openHistory()" title="Spiel-Historie">📜</button>
 
         <button class="fullscreen-btn" onclick="toggleFullscreen()" title="Vollbild ein/aus">⛶</button>
         <button onclick="fullReset()" style="background:#b93a32;" title="Kompletter Reset">↺</button>
@@ -798,6 +897,92 @@ button:active {
 </div>
 
 <div class="layout" id="layout"></div>
+
+<!-- Einstellungen: Mannschaftsnamen, Farbzuweisung, Auswahl Siege/Kehren/Spieler -
+     alles, was vorher fest sichtbar in der Kopfzeile stand, ist jetzt hier über
+     das Zahnrad erreichbar. -->
+<div class="settings-overlay" id="settingsOverlay">
+    <div class="settings-box">
+        <button class="settings-close-btn" onclick="closeSettings()" title="Schließen">✕</button>
+        <h3>⚙️ Einstellungen</h3>
+
+        <div class="settings-section">
+            <h4>Mannschaften</h4>
+            <div class="team-name-row">
+                <div class="team-name-group">
+                    <label><span id="teamIconW">⚪</span> <input type="text" id="teamNameInputW" maxlength="24" placeholder="Mannschaftsname W" oninput="updateTeamName('w', this.value)"></label>
+                    <div class="color-toggle" id="colorToggleW">
+                        <button type="button" class="color-btn green" onclick="setTeamColor('w','green')"><span class="dot"></span>Leuchtgrün</button>
+                        <button type="button" class="color-btn red" onclick="setTeamColor('w','red')"><span class="dot"></span>Leuchtrot</button>
+                    </div>
+                </div>
+                <div class="team-name-group">
+                    <label><span id="teamIconE">🔴</span> <input type="text" id="teamNameInputE" maxlength="24" placeholder="Mannschaftsname E" oninput="updateTeamName('e', this.value)"></label>
+                    <div class="color-toggle" id="colorToggleE">
+                        <button type="button" class="color-btn green" onclick="setTeamColor('e','green')"><span class="dot"></span>Leuchtgrün</button>
+                        <button type="button" class="color-btn red" onclick="setTeamColor('e','red')"><span class="dot"></span>Leuchtrot</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h4>Spielregeln</h4>
+            <div class="settings-selects">
+                <label>Auswahl Siege
+                    <select id="gamesSelect">
+                        <option value="2" selected>2 Siege</option>
+                        <option value="3">3 Siege</option>
+                        <option value="4">4 Siege</option>
+                        <option value="5">5 Siege</option>
+                        <option value="6">6 Siege</option>
+                    </select>
+                </label>
+                <label>Auswahl Kehren
+                    <select id="kehrenSelect">
+                        <option value="4">4 Kehren</option>
+                        <option value="6" selected>6 Kehren</option>
+                        <option value="8">8 Kehren</option>
+                        <option value="10">10 Kehren</option>
+                    </select>
+                </label>
+                <label>Auswahl Spieler
+                    <select id="playerCount">
+                        <option value="3">3 Spieler/Kehre</option>
+                        <option value="4" selected>4 Spieler/Kehre</option>
+                        <option value="5">5 Spieler/Kehre</option>
+                        <option value="6">6 Spieler/Kehre</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <button class="settings-done-btn" onclick="closeSettings()">✓ Fertig</button>
+    </div>
+</div>
+
+<!-- Spiel-Historie: alle innerhalb des laufenden Trainings bereits
+     abgeschlossenen Spiele mit Spielpunkten (Siege) und Stockpunkten. -->
+<div class="history-overlay" id="historyOverlay">
+    <div class="history-box">
+        <button class="settings-close-btn" onclick="closeHistory()" title="Schließen">✕</button>
+        <h3>📜 Spiel-Historie</h3>
+        <div class="history-summary" id="historySummary">Spielpunkte – Stand: 0 : 0</div>
+        <div class="history-table-wrap">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Spiel</th>
+                        <th>Stockpunkte</th>
+                        <th>Sieger (Spielpunkt)</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+        <button class="history-close-btn" onclick="closeHistory()">Schließen</button>
+    </div>
+</div>
 
 <!-- Training beendet Overlay -->
 <div class="training-ended-overlay" id="trainingEndedOverlay">
@@ -848,9 +1033,7 @@ button:active {
 <!-- Eigenständiges Einzelprogramm für Tablets: keine Zugangssperre
      (der frühere Test-/Admin-Login wurde wieder entfernt, der Zugriffsschutz
      erfolgt jetzt zentral über das Dashboard) - sofort einsatzbereit, ohne
-     Login. Ein einfacher Link zurück zum Dashboard ist trotzdem vorhanden
-     (siehe .topbar oben), damit man von hier aus wieder ins Portal wechseln
-     kann. -->
+     Login. -->
 <script>
 const PENDING_DIGIT_TIMEOUT = 650;
 
@@ -1013,7 +1196,8 @@ const state = {
     pendingDigit: null,             // { digit, timeoutId } für 2-stellige Eingabe (z.B. "10")
     pendingConfirm: null,           // { idx } während der Kehre-Bestätigen-Dialog offen ist
     teamNames: loadTeamNames(),
-    teamColors: loadTeamColors()    // { w: 'green'|'red', e: 'green'|'red' } - RAL 6038/3024
+    teamColors: loadTeamColors(),   // { w: 'green'|'red', e: 'green'|'red' } - RAL 6038/3024
+    gameHistory: []                 // Spiel-Historie des laufenden Trainings: [{ stockA, stockB, winnerCode, winsA, winsB }]
 };
 // createArena() liest state.kehren, daher erst NACH der obigen Deklaration aufrufen
 // (sonst "Cannot access 'state' before initialization").
@@ -1385,7 +1569,18 @@ function evaluateGame() {
 // nächste Runde vor.
 function finishGame(winnerCode) {
     const arena = state.arena;
+
+    // Stockpunkte dieses Spiels sichern, BEVOR pointsA/pointsB fürs nächste
+    // Spiel zurückgesetzt werden - für die Spiel-Historie (Zahnrad -> Historie).
+    const stockA = sum(arena.pointsA);
+    const stockB = sum(arena.pointsB);
+
     if (winnerCode === 'w') arena.winsA++; else arena.winsB++;
+
+    state.gameHistory.push({
+        stockA, stockB, winnerCode,
+        winsA: arena.winsA, winsB: arena.winsB
+    });
 
     state.kehren = state.baseKehren;
     arena.pointsA = Array(state.kehren).fill(null);
@@ -1473,6 +1668,7 @@ function startNewTraining() {
     state.arena = createArena();
     state.selectedTeam = null;
     state.targetKehre = null;
+    state.gameHistory = [];
     cancelPendingDigit();
     updateKeyboardStatus();
     render();
@@ -1677,6 +1873,7 @@ function resetGame() {
     arena.winsB = 0;
     state.selectedTeam = null;
     state.targetKehre = null;
+    state.gameHistory = [];
     cancelPendingDigit();
     updateKeyboardStatus();
     render();
@@ -1689,6 +1886,7 @@ function fullReset() {
     state.selectedTeam = null;
     state.targetKehre = null;
     state.isTrainingEnded = false;
+    state.gameHistory = [];
     cancelPendingDigit();
     updateKeyboardStatus();
     document.getElementById('trainingEndedOverlay').classList.remove('show');
@@ -1702,6 +1900,55 @@ function toggleFullscreen() {
     } else {
         document.exitFullscreen();
     }
+}
+
+// ===== EINSTELLUNGEN (Zahnrad) =====
+function openSettings() {
+    syncTeamNameInputs();
+    updateColorToggleUI();
+    document.getElementById('settingsOverlay').classList.add('show');
+}
+
+function closeSettings() {
+    document.getElementById('settingsOverlay').classList.remove('show');
+}
+
+// ===== SPIEL-HISTORIE =====
+function openHistory() {
+    renderHistory();
+    document.getElementById('historyOverlay').classList.add('show');
+}
+
+function closeHistory() {
+    document.getElementById('historyOverlay').classList.remove('show');
+}
+
+function renderHistory() {
+    const arena = state.arena;
+    const body = document.getElementById('historyBody');
+
+    if (!state.gameHistory.length) {
+        body.innerHTML = `<tr><td colspan="3" style="text-align:center;color:#889;padding:18px 10px;">Noch keine abgeschlossenen Spiele in diesem Training.</td></tr>`;
+    } else {
+        body.innerHTML = state.gameHistory.map((g, i) => {
+            const winnerName = state.teamNames[g.winnerCode];
+            const winnerIcon = teamIcon(g.winnerCode);
+            return `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${g.stockA} : ${g.stockB}</td>
+                <td>${winnerIcon} ${escapeHtmlTablet(winnerName)}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    document.getElementById('historySummary').textContent =
+        `Spielpunkte (Siege) – Stand: ${teamIcon('w')} ${state.teamNames.w} ${arena.winsA} : ${arena.winsB} ${state.teamNames.e} ${teamIcon('e')}`;
+}
+
+function escapeHtmlTablet(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
 function toast(msg, type) {
